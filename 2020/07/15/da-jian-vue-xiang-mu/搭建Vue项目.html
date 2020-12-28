@@ -1,0 +1,187 @@
+<hr>
+<p>title: 搭建Vue项目<br>date: 2020-07-15 16:33:52<br>author: zhonghong<br>tags:<br>    - Vue</p>
+<hr>
+<h1 id="配置Vue开发环境"><a href="#配置Vue开发环境" class="headerlink" title="配置Vue开发环境"></a>配置Vue开发环境</h1><h2 id="安装node"><a href="#安装node" class="headerlink" title="安装node"></a>安装node</h2><p>下载地址：<a href="http://nodejs.cn/download/" target="_blank" rel="noopener">http://nodejs.cn/download/</a></p>
+<h1 id="vue-cli脚手架"><a href="#vue-cli脚手架" class="headerlink" title="vue-cli脚手架"></a>vue-cli脚手架</h1><blockquote>
+<p>版本要求</p>
+<p>node 8.9+</p>
+</blockquote>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><pre><code class="shell">npm install -g @vue/cli
+<span class="meta">#</span><span class="bash"> OR</span>
+yarn global add @vue/cli</code></pre>
+<p>检查其版本是否正确：</p>
+<pre><code class="shell">vue --version</code></pre>
+<h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><pre><code class="shell">vue create vue-domo</code></pre>
+<h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><p>结合项目需求，规范了项目结构</p>
+<pre><code>
+├── 
+├── public  打包所需静态资源
+└── src
+    ├── api     后端接口api请求目录
+    └── assets  项目静态资源
+        ├── css  css
+        └── img  图片资源
+    ├── components  公共组件
+    ├── config  开发相关配置
+        └── config.js   项目运行配置
+    ├── plugins  第三方插件相关配置
+        └── element.js   element ui配置
+    ├── utils  封装工具函数
+    ├── router  路由配置
+    ├── store  Vuex配置
+    ├── vendors  拆分打包配置
+    ├── view  页面文件
+        ├── common     公共模块
+        ├── module     模块
+        └── page       页面
+    └── tests  测试相关
+└── vue.config.js VUE-CLI配置文件
+└── server.js 本地服务器运行生产环境</code></pre><h1 id="配置vue-router"><a href="#配置vue-router" class="headerlink" title="配置vue-router"></a>配置vue-router</h1><h2 id="安装-1"><a href="#安装-1" class="headerlink" title="安装"></a>安装</h2><pre><code class="shell">npm i vue-router -S</code></pre>
+<h2 id="新增-src-router-index-js"><a href="#新增-src-router-index-js" class="headerlink" title="新增 src/router/index.js"></a>新增 src/router/index.js</h2><pre><code class="javascript"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">'vue'</span>;
+<span class="keyword">import</span> Router <span class="keyword">from</span> <span class="string">'vue-router'</span>;
+
+Vue.use(Router)
+<span class="keyword">const</span> router = <span class="keyword">new</span> Router({
+  mode: <span class="string">'hash'</span>,
+  routes: [
+    {
+      path: <span class="string">'/'</span>,
+      redirect: <span class="string">'/home'</span>
+    }, 
+    {
+      path: <span class="string">'/home'</span>,
+      name: <span class="string">'Home'</span>,
+      component: <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">import</span>(<span class="string">'@/views/home/index.vue'</span>)
+    },
+    {
+      path: <span class="string">'/500'</span>,
+      name: <span class="string">'error_500'</span>,
+      component: <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">import</span>(<span class="string">'@/views/errorPage/500.vue'</span>)
+    },
+    {
+      path: <span class="string">'/401'</span>,
+      name: <span class="string">'error_401'</span>,
+      component: <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">import</span>(<span class="string">'@/views/errorPage/401.vue'</span>)
+    },
+    {
+      path: <span class="string">'*'</span>,
+      name: <span class="string">'error_404'</span>,
+      component: <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">import</span>(<span class="string">'@/views/errorPage/404.vue'</span>)
+    }
+  ]
+})
+
+<span class="keyword">export</span> <span class="keyword">default</span> router</code></pre>
+<h2 id="修改-main-js"><a href="#修改-main-js" class="headerlink" title="修改 main.js"></a>修改 main.js</h2><pre><code class="javascript"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">'vue'</span>;
+<span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">'./App.vue'</span>;
+<span class="keyword">import</span> router <span class="keyword">from</span> <span class="string">'./router'</span>;
+<span class="keyword">import</span> store <span class="keyword">from</span> <span class="string">'./store'</span>;
+<span class="comment">// 引入element-UI</span>
+<span class="keyword">import</span> <span class="string">'./plugins/element.js'</span>;
+<span class="comment">// 引入公共样式</span>
+<span class="keyword">import</span> <span class="string">'@/assets/css/index.css'</span>;
+
+Vue.config.productionTip = <span class="literal">false</span>; <span class="comment">// 阻止启动生产消息</span>
+
+<span class="keyword">new</span> Vue({
+    router,
+    store,
+    render: <span class="function"><span class="params">h</span> =&gt;</span> h(App),
+  }).$mount(<span class="string">'#app'</span>);</code></pre>
+<h1 id="配置vuex"><a href="#配置vuex" class="headerlink" title="配置vuex"></a>配置vuex</h1><h2 id="安装-2"><a href="#安装-2" class="headerlink" title="安装"></a>安装</h2><pre><code class="shell">npm i vuex -S</code></pre>
+<h2 id="新增-src-store-index-js"><a href="#新增-src-store-index-js" class="headerlink" title="新增 src/store/index.js"></a>新增 src/store/index.js</h2><pre><code class="javascript"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">'vue'</span>;
+<span class="keyword">import</span> Vuex <span class="keyword">from</span> <span class="string">'vuex'</span>;
+<span class="keyword">import</span> app <span class="keyword">from</span> <span class="string">'./module/app'</span>;
+
+Vue.use(Vuex);
+
+<span class="keyword">const</span> debug = process.env.NODE_ENV !== <span class="string">'production'</span>;
+
+<span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">new</span> Vuex.Store({
+  modules: {
+    app
+  },
+  strict: debug
+})</code></pre>
+<h1 id="整合Element-UI"><a href="#整合Element-UI" class="headerlink" title="整合Element UI"></a>整合Element UI</h1><h2 id="安装-3"><a href="#安装-3" class="headerlink" title="安装"></a>安装</h2><pre><code class="shell">vue add element</code></pre>
+<p>出现选择全部引入还是按需引入，此时我们选择按需引入，Import on demand</p>
+<p><img src=".%5Cimg%5Celement.png" alt=""></p>
+<p>然后选择zh-CN</p>
+<p><img src="img/zh-CN.png" alt=""></p>
+<h2 id="如何按需引入"><a href="#如何按需引入" class="headerlink" title="如何按需引入"></a>如何按需引入</h2><p><img src="img/load.png" alt=""></p>
+<h1 id="使用axios"><a href="#使用axios" class="headerlink" title="使用axios"></a>使用axios</h1><h2 id="安装-4"><a href="#安装-4" class="headerlink" title="安装"></a>安装</h2><pre><code class="javascript">npm i axios -S</code></pre>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p><img src="img/http.png" alt=""></p>
+<h1 id="支持less"><a href="#支持less" class="headerlink" title="支持less"></a>支持less</h1><pre><code class="shell">npm install --save-dev less-loader@5.0.0
+
+npm install --save-dev less</code></pre>
+<h1 id="启用gzip压缩"><a href="#启用gzip压缩" class="headerlink" title="启用gzip压缩"></a>启用gzip压缩</h1><h2 id="安装-5"><a href="#安装-5" class="headerlink" title="安装"></a>安装</h2><pre><code class="javascript">npm install --save-dev compression-webpack-plugin</code></pre>
+<h2 id="新建-vue-config-js"><a href="#新建-vue-config-js" class="headerlink" title="新建 vue.config.js"></a>新建 vue.config.js</h2><pre><code class="javascript"><span class="comment">// Begin 生成 gzip 压缩文件</span>
+config.plugins.push(
+    <span class="keyword">new</span> CompressionWebpackPlugin({
+        test: productionGzipExtensions,
+        threshold: <span class="number">1024</span>, <span class="comment">//对超过10k的数据进行压缩</span>
+        deleteOriginalAssets: <span class="literal">false</span>, <span class="comment">//是否删除源文件</span>
+    })
+);</code></pre>
+<h2 id="nginx-开启-gzip"><a href="#nginx-开启-gzip" class="headerlink" title="nginx 开启 gzip"></a>nginx 开启 gzip</h2><pre><code class="shell">http:{ 
+
+    gzip on; 
+
+    gzip_static on;
+
+    gzip_buffers 4 16k;
+
+    gzip_comp_level 5;
+
+    gzip_types text/plain application/javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png;
+
+}</code></pre>
+<h1 id="代码拆分打包"><a href="#代码拆分打包" class="headerlink" title="代码拆分打包"></a>代码拆分打包</h1><p><img src="img/code.png" alt=""></p>
+<h1 id="解决跨域问题"><a href="#解决跨域问题" class="headerlink" title="解决跨域问题"></a>解决跨域问题</h1><h2 id="nginx反向代理"><a href="#nginx反向代理" class="headerlink" title="nginx反向代理"></a>nginx反向代理</h2><pre><code class="shell">server {
+    listen       80;
+    server_name  localhost;
+    ## 用户访问 localhost，则反向代理到https://www.ihuaben.com
+    location / {
+        root   html;
+        index  index.html index.htm;
+        proxy_pass https://www.ihuaben.com;
+    }
+}</code></pre>
+<h2 id="前端设置服务器代理"><a href="#前端设置服务器代理" class="headerlink" title="前端设置服务器代理"></a>前端设置服务器代理</h2><p>修改 <code>vue.config.js</code></p>
+<pre><code class="javascript">devServer: {
+    proxy: {
+      <span class="string">'/api'</span>: {
+        target: <span class="string">'http://localhost:8083'</span>, <span class="comment">// 代理域名 + 端口</span>
+        ws: <span class="literal">true</span>,
+        changeOrigin: <span class="literal">true</span>,
+        secure: <span class="literal">false</span>,
+        pathRewrite: {
+          <span class="string">'^/api'</span>: <span class="string">''</span>
+        }
+      }
+    }
+}</code></pre>
+<h2 id="服务端允许跨域"><a href="#服务端允许跨域" class="headerlink" title="服务端允许跨域"></a>服务端允许跨域</h2><pre><code class="java"><span class="meta">@Component</span>
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleCORSFilter</span> <span class="keyword">implements</span> <span class="title">Filter</span> </span>{
+
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doFilter</span><span class="params">(ServletRequest req, ServletResponse res, FilterChain chain)</span> <span class="keyword">throws</span> IOException, ServletException </span>{
+
+        HttpServletResponse response = (HttpServletResponse) res;
+
+        response.setHeader(<span class="string">"Access-Control-Allow-Origin"</span>, <span class="string">"*"</span>);
+
+        response.setHeader(<span class="string">"Access-Control-Allow-Methods"</span>, <span class="string">"POST, GET, OPTIONS, DELETE, HEAD"</span>);
+
+        response.setHeader(<span class="string">"Access-Control-Max-Age"</span>, <span class="string">"3600"</span>);
+
+        response.setHeader(<span class="string">"Access-Control-Allow-Headers"</span>, <span class="string">"access-control-allow-origin, authority, content-type, version-info, X-Requested-With"</span>);
+
+        chain.doFilter(req, res);
+
+    }
+
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(FilterConfig filterConfig)</span> </span>{}
+
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> </span>{}
+
+}</code></pre>
